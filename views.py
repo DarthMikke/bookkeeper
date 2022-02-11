@@ -36,3 +36,9 @@ class list(View):
         context['receipts'] = Receipt.objects.filter(date__gte=context['day'], date__lte=context['day'])
 
         return render(request, "list.html", context=context)
+
+
+class payee_list(View):
+    def get(self, request):
+
+        ...
