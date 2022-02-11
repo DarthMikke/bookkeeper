@@ -7,6 +7,7 @@ from .forms import ReceiptForm
 class add_receipt(View):
     # TODO: Add authentication here
     def get(self, request):
+        # TODO: Add possibility for editing with the same view
         context = {"form": ReceiptForm()}
         return render(request, "add_receipt.html", context=context)
 
