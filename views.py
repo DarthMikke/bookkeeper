@@ -35,6 +35,8 @@ class list(View):
         context['days'] = [datetime.fromisocalendar(weekdate[0], weekdate[1], i) for i in range(1, 8)]
         context['receipts'] = Receipt.objects.filter(date__gte=context['day'], date__lte=context['day'])
 
+        context['total'] = sum([x.amount for x in context['receipts']])
+
         return render(request, "list.html", context=context)
 
 
