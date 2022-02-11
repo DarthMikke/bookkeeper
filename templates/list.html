@@ -1,17 +1,31 @@
 {% extends 'base.html' %}
 {% block content %}
-    {{ day.date }}
-    <a href="{% url 'list_view' %}?day={{ prev_week.date.isoformat }}">&lt;</a>
+    <h3 class="text-center">{{ day.date }}</h3>
+    <nav aria-label="Change date" class="justify-content-center">
+    <ul class="pagination justify-content-center">
+    <li class="page-item">
+        <a class="page-link" href="{% url 'list_view' %}?day={{ prev_week.date.isoformat }}">&lt;</a>
+    </li>
     {% for day in days %}
-        <a href="{% url 'list_view' %}?day={{ day.date.isoformat }}">{{ day.day }}</a>
+    <li class="page-item">
+        <a class="page-link" href="{% url 'list_view' %}?day={{ day.date.isoformat }}">{{ day.day }}.</a>
+    </li>
     {% endfor %}
-    <a href="{% url 'list_view' %}?day={{ next_week.date.isoformat }}">&gt;</a>
-    <a href="{% url 'add_receipt' %}?day={{ day.date.isoformat }}">Ny utgift</a>
-    <table>
+    <li class="page-item">
+        <a class="page-link" href="{% url 'list_view' %}?day={{ next_week.date.isoformat }}">&gt;</a>
+    </li>
+    </ul>
+    </nav>
+    <div class="justify-content-center">
+        <a class="btn btn-primary" href="{% url 'add_receipt' %}?day={{ day.date.isoformat }}">Ny utgift</a>
+    </div>
+    <table class="table">
     {% for expense in receipts %}
         <tr>
-            <td>{{ expense.to_account }}</td>
-            <td>{{ expense.amount }}</td>
+            <td><a href="{% url "payee" %}">{{ expense.to_account }}</a></td>
+            <td>{{ expense.category }}</td>
+            <td>{{ expense.amount }} NOK</td>
+            <td></td>
         </tr>
     {% endfor %}
     </table>
