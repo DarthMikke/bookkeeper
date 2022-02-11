@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import Http404
 from django.views import View
 from .forms import ReceiptForm
 from .models import Receipt
@@ -35,6 +36,25 @@ class add_receipt(View):
             return redirect('list_view')
         else:
             return render(request, "add_receipt.html", context={'form': f})
+
+
+class delete_receipt(View):
+    # TODO: Check that the receipt is user's. Return 404 otherwise
+    def get(self, request):
+        try:
+            pk = int(request.GET['receipt'])
+        except:
+            return Http404("Receipt doesn't exist")
+
+        receipt = Receipt.objects.get(id=pk)
+
+        if 'confirmed' in request.GET.keys():
+            if request.GET['confirmed'] == "1":
+                receipt.delete()
+                return redirect('list_view')
+
+        return render(request, 'delete_receipt.html', {'receipt': receipt})
+
 
 
 class list(View):

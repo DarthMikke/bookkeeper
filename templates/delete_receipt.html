@@ -1,0 +1,22 @@
+<html lang="nn">
+<head>
+    <title>Slett utgift</title>
+
+    <!--
+      Bootstrap
+    -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+</head>
+<body>
+<div class="container">
+    Er du sikker på at du vil slette kvitteringa til {{ receipt.to_account }} på {{ receipt.amount }} NOK?
+    <div class="container-fluid">
+        <a class="btn btn-danger" href="{% url "delete_receipt" %}?receipt={{ receipt.id }}&confirmed=1">Ja</a>
+        <a class="btn btn-secondary" href="{% url "list_view" %}">Nei</a>
+    </div>
+</div>
+</body>
+</html>

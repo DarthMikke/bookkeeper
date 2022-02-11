@@ -29,6 +29,8 @@
             <td><a href="{% url "edit_receipt" %}?receipt={{ expense.id }}">
                 <i class="bi bi-pencil"></i>
             </a>
+            <a href="{% url "delete_receipt" %}?receipt={{ expense.id }}"><i class="bi bi-x-circle"></i>
+            </a>
             </td>
         </tr>
     {% endfor %}
