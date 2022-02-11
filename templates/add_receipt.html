@@ -1,0 +1,12 @@
+<html lang="nn">
+<head>
+    <title>Ny utgift</title>
+</head>
+<body>
+    <form method="post" action="{% url 'add_receipt' %}">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Legg til">
+    </form>
+</body>
+</html>
