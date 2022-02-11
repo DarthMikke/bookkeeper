@@ -10,11 +10,26 @@ class add_receipt(View):
     # TODO: Add authentication here
     def get(self, request):
         # TODO: Add possibility for editing with the same view
-        context = {"form": ReceiptForm()}
+        context = {'id': 0}
+        if 'receipt' in request.GET.keys():
+            print(f"Hentar kvittering {request.GET['receipt']}...")
+            r = Receipt.objects.get(id=request.GET['receipt'])
+            print(r)
+            context['form'] = ReceiptForm({
+                'from_account': r.from_account,
+                'to_account': r.to_account,
+                'date': r.date,
+                'amount': r.amount
+            })
+            context['id'] = r.id
+        else:
+            context["form"] = ReceiptForm()
         return render(request, "add_receipt.html", context=context)
 
     def post(self, request):
         f = ReceiptForm(request.POST)
+        if request.POST['id'] != "0":
+            f.instance = Receipt.objects.get(id=int(request.POST['id']))
         if f.is_valid():
             new_receipt = f.save()
             return redirect('list_view')

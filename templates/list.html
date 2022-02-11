@@ -26,7 +26,10 @@
             <td><a href="{% url "payee" %}?account={{ expense.to_account.id }}">{{ expense.to_account }}</a></td>
             <td>{{ expense.category }}</td>
             <td>{{ expense.amount }} NOK</td>
-            <td></td>
+            <td><a href="{% url "edit_receipt" %}?receipt={{ expense.id }}">
+                <i class="bi bi-pencil"></i>
+            </a>
+            </td>
         </tr>
     {% endfor %}
     </tbody>
