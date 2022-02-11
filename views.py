@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from .forms import ReceiptForm
 from .models import Receipt
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 # Create your views here.
@@ -26,10 +26,12 @@ class list(View):
     def get(self, request):
         context = {}
         if 'day' in request.GET.keys():
-            context['day'] = datetime.fromisoformat(request['day'])
+            context['day'] = datetime.fromisoformat(request.GET['day'])
         else:
             context['day'] = datetime.now()
         weekdate = context['day'].isocalendar()
+        context['prev_week'] = context['day'] - timedelta(7)
+        context['next_week'] = context['day'] + timedelta(7)
         context['days'] = [datetime.fromisocalendar(weekdate[0], weekdate[1], i) for i in range(1, 8)]
         context['receipts'] = Receipt.objects.filter(date__gte=context['day'], date__lte=context['day'])
 

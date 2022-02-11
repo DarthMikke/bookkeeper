@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-    {{ day }}
-    <a href="{% url 'list_view' %}?day={{ prev_week }}"><</a>
+    {{ day.date }}
+    <a href="{% url 'list_view' %}?day={{ prev_week.date.isoformat }}">&lt;</a>
     {% for day in days %}
-        <a href="{% url 'list_view' %}?day={{ day }}">{{ day.day }}</a>
+        <a href="{% url 'list_view' %}?day={{ day.date.isoformat }}">{{ day.day }}</a>
     {% endfor %}
-
+    <a href="{% url 'list_view' %}?day={{ next_week.date.isoformat }}">&gt;</a>
+    <a href="{% url 'add_receipt' %}?day={{ day.date.isoformat }}">Ny utgift</a>
     <table>
     {% for expense in receipts %}
         <tr>
-            <td>{{ expense.name }}</td>
+            <td>{{ expense.to_account }}</td>
             <td>{{ expense.amount }}</td>
         </tr>
     {% endfor %}
