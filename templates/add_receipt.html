@@ -1,13 +1,31 @@
-<html lang="nn">
-<head>
-    <title>Ny utgift</title>
-</head>
-<body>
+{% extends "base_modal.html" %}
+{% block content %}
     <form method="post" action="{% url 'add_receipt' %}">
         {% csrf_token %}
+        <div class="fieldWrapper">
+            <label for="{{ form.from_account.id_for_label }}">Frå: </label>
+            {{ form.from_account }}
+            <a href="#"><i class="bi bi-plus"></i></a>
+            <a href="#"><i class="bi bi-pencil"></i></a>
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.to_account.id_for_label }}">Til: </label>
+            {{ form.to_account }}
+            <a href="{% url 'add_payee' %}"><i class="bi bi-plus"></i></a>
+            <a href="#"><i class="bi bi-pencil"></i></a>
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.date.id_for_label }}">Dato: </label>
+            {{ form.date }}
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.amount.id_for_label }}">Beløp: </label>
+            {{ form.amount }}
+        </div>
+        {% comment %}
         {{ form }}
+        {% endcomment %}
         <input type="hidden" name="id" value="{{ id }}">
         <input type="submit" value="Legg til">
     </form>
-</body>
-</html>
+{% endblock %}
