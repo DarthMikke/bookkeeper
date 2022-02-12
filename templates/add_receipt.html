@@ -6,6 +6,7 @@
     <form method="post" action="{% url 'add_receipt' %}">
         {% csrf_token %}
         {{ form }}
+        <input type="hidden" name="id" value="{{ id }}">
         <input type="submit" value="Legg til">
     </form>
 </body>
