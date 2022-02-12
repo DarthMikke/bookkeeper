@@ -56,7 +56,6 @@ class delete_receipt(View):
         return render(request, 'delete_receipt.html', {'receipt': receipt})
 
 
-
 class list(View):
     def get(self, request):
         context = {}
@@ -79,3 +78,8 @@ class payee_list(View):
     def get(self, request):
 
         ...
+
+
+class add_payee(View):
+    def get(self, request):
+        render(request, "add_payee.html")
