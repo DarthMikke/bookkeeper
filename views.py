@@ -62,12 +62,12 @@ class list(View):
         if 'day' in request.GET.keys():
             context['day'] = datetime.fromisoformat(request.GET['day'])
         else:
-            context['day'] = datetime.now()
+            context['day'] = datetime.now().date()
         weekdate = context['day'].isocalendar()
         context['prev_week'] = context['day'] - timedelta(7)
         context['next_week'] = context['day'] + timedelta(7)
         context['days'] = [datetime.fromisocalendar(weekdate[0], weekdate[1], i) for i in range(1, 8)]
-        context['receipts'] = Receipt.objects.filter(date__gte=context['day'], date__lte=context['day'])
+        context['receipts'] = Receipt.objects.filter(date__gte=context['day'], date__lt=context['day']+timedelta(1))
 
         context['total'] = sum([x.amount for x in context['receipts']])
 
