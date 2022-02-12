@@ -1,5 +1,5 @@
 from django import forms
-from .models import Receipt, Payee
+from .models import Receipt, SpendingAccount
 
 
 class ReceiptForm(forms.ModelForm):
@@ -10,5 +10,5 @@ class ReceiptForm(forms.ModelForm):
 
 class PayeeForm(forms.ModelForm):
     class Meta:
-        model = Payee
-        fields = '__all__'
+        model = SpendingAccount
+        fields = ['name']

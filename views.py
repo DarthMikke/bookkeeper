@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import Http404
 from django.views import View
-from .forms import ReceiptForm
-from .models import Receipt
+from .forms import ReceiptForm, PayeeForm
+from .models import Receipt, SpendingAccount, Profile
 from datetime import datetime, timedelta
 
 
@@ -82,4 +82,22 @@ class payee_list(View):
 
 class add_payee(View):
     def get(self, request):
-        render(request, "add_payee.html")
+        context = {'id': 0}
+        if 'payee' in request.GET.keys():
+            p = Payee.objects.get(id=request.GET['receipt'])
+            f = PayeeForm({'name': p.name})
+            context['form'] = f
+            context['id'] = p.id
+        else:
+            context['form'] = PayeeForm()
+        return render(request, "add_payee.html", context)
+
+    def post(self, request):
+        f = PayeeForm(request.POST)
+        if request.POST['id'] != "0":
+            f.instance = SpendingAccount.objects.get(id=int(request.POST['id']))
+        f.instance.owner = Profile.objects.get(user=request.user)
+        if f.is_valid():
+            f.save()
+            return redirect('add_receipt')
+        return render(request, "add_payee.html", context={'form': f})

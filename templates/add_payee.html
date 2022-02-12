@@ -1,3 +1,18 @@
 {% extends "base_modal.html" %}
 {% block content %}
+    <form method="post" action="{% url 'add_payee' %}">
+        {% csrf_token %}
+        <div class="fieldWrapper">
+            <label for="{{ form.name.id_for_label }}">Namn: </label>
+            {{ form.name }}
+        </div>
+        {% comment %}
+        <div class="fieldWrapper">
+            <label for="{{ form.default_category.id_for_label }}">Standardkategori: </label>
+            {{ form.category }}
+        </div>
+        {% endcomment %}
+        <input type="hidden" name="id" value="{{ id }}">
+        <input type="submit" value="Legg til">
+    </form>
 {% endblock %}
