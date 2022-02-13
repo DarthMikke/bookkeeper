@@ -34,7 +34,7 @@ def offset_month(dt, offset):
 
 
 # Create your views here.
-class add_receipt(View):
+class receipt_add(View):
     # TODO: Add authentication here
     def get(self, request):
         # TODO: Add possibility for editing with the same view
