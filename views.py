@@ -155,6 +155,10 @@ class payee_transactions(View):
         context['next_month_from'] = offset_month(offset_from, 1)
         context['next_month_to'] = offset_month(offset_from, 2) - timedelta(1)
         context['current_date_verbose'] = context['current_date'].strftime("%B %Y")
-        context['receipts'] = Receipt.objects.filter(to_account=context['payee'])
+        context['receipts'] = Receipt.objects.filter(
+            to_account=context['payee'],
+            date__gte=offset_from,
+            date__lt=context['next_month_from']
+        )
         context['total'] = sum([x.amount for x in context['receipts']])
         return render(request, 'payee_transactions.html', context)
