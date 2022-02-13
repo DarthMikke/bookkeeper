@@ -1,9 +1,36 @@
+import math
 from django.shortcuts import render, redirect
 from django.http import Http404
 from django.views import View
-from .forms import ReceiptForm
-from .models import Receipt
+from django.urls import reverse
+from .forms import ReceiptForm, PayeeForm
+from .models import Receipt, SpendingAccount, Profile
 from datetime import datetime, timedelta
+from base64 import b64encode, b64decode
+
+
+def build_path(request):
+    return request.META['PATH_INFO'] + "?" + request.META['QUERY_STRING']
+
+
+def build_path_base64(request):
+    return b64encode(build_path(request).encode('utf-8')).decode('utf-8')
+
+
+def offset_month(dt, offset):
+    """
+    Return datetime containing 1st day of month offset by `offset` months
+    from the given datetime `dt`.
+    """
+    if offset == 0:
+        return datetime(dt.year, dt.month, 1)
+    total = dt.year * 12 + dt.month + offset
+    year = math.floor(total/12)
+    month = total % 12
+    if month == 0:
+        year -= 1
+        month = 12
+    return datetime(year, month, 1)
 
 
 # Create your views here.
@@ -11,7 +38,7 @@ class add_receipt(View):
     # TODO: Add authentication here
     def get(self, request):
         # TODO: Add possibility for editing with the same view
-        context = {'id': 0}
+        context = {'id': 0, 'path': build_path_base64(request)}
         if 'receipt' in request.GET.keys():
             print(f"Hentar kvittering {request.GET['receipt']}...")
             r = Receipt.objects.get(id=request.GET['receipt'])
@@ -56,7 +83,6 @@ class delete_receipt(View):
         return render(request, 'delete_receipt.html', {'receipt': receipt})
 
 
-
 class list(View):
     def get(self, request):
         context = {}
@@ -77,5 +103,75 @@ class list(View):
 
 class payee_list(View):
     def get(self, request):
+        payees = SpendingAccount.objects.filter(owner=Profile.objects.get(user=request.user))
+        return render(request, 'payee_list.html', {'payees': payees})
 
-        ...
+
+class add_payee(View):
+    def get(self, request):
+        context = {'id': 0}
+        if 'next' in request.GET.keys():
+            context['next'] = request.GET['next']
+        if 'payee' in request.GET.keys():
+            p = SpendingAccount.objects.get(id=request.GET['payee'])
+            f = PayeeForm({'name': p.name})
+            context['form'] = f
+            context['id'] = p.id
+        else:
+            context['form'] = PayeeForm()
+        return render(request, "add_payee.html", context)
+
+    def post(self, request):
+        f = PayeeForm(request.POST)
+        if request.POST['id'] != "0":
+            f.instance = SpendingAccount.objects.get(id=int(request.POST['id']))
+        f.instance.owner = Profile.objects.get(user=request.user)
+        if f.is_valid():
+            f.save()
+            path = 'payee'
+            if 'next' in request.GET.keys():
+                path = b64decode(request.GET['next']).decode('utf-8')
+            return redirect(path)
+        return render(request, "add_payee.html", context={'form': f})
+
+
+class delete_payee(View):
+    # TODO: Check that the payee is user's. Return 404 otherwise
+    def get(self, request):
+        try:
+            pk = int(request.GET['payee'])
+        except:
+            return Http404("Payee doesn't exist")
+
+        payee = SpendingAccount.objects.get(id=pk)
+
+        if 'confirmed' in request.GET.keys():
+            if request.GET['confirmed'] == "1":
+                payee.delete()
+                return redirect('payee')
+
+        return render(request, 'delete_payee.html', {'payee': payee})
+
+
+class payee_transactions(View):
+    def get(self, request):
+        context = {
+            'payee': SpendingAccount.objects.get(id=request.GET['payee']),
+        }
+        if 'from' in request.GET.keys():
+            context['current_date'] = datetime.fromisoformat(request.GET['from'])
+        else:
+            context['current_date'] = datetime.now()
+        offset_from = datetime(context['current_date'].year, context['current_date'].month, 1)
+        context['prev_month_from'] = offset_month(offset_from, -1)
+        context['prev_month_to'] = offset_month(offset_from, 0) - timedelta(1)
+        context['next_month_from'] = offset_month(offset_from, 1)
+        context['next_month_to'] = offset_month(offset_from, 2) - timedelta(1)
+        context['current_date_verbose'] = context['current_date'].strftime("%B %Y")
+        context['receipts'] = Receipt.objects.filter(
+            to_account=context['payee'],
+            date__gte=offset_from,
+            date__lt=context['next_month_from']
+        )
+        context['total'] = sum([x.amount for x in context['receipts']])
+        return render(request, 'payee_transactions.html', context)
