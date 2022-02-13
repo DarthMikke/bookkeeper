@@ -85,7 +85,7 @@ class add_payee(View):
     def get(self, request):
         context = {'id': 0}
         if 'payee' in request.GET.keys():
-            p = Payee.objects.get(id=request.GET['receipt'])
+            p = SpendingAccount.objects.get(id=request.GET['payee'])
             f = PayeeForm({'name': p.name})
             context['form'] = f
             context['id'] = p.id
