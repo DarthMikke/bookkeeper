@@ -1,3 +1,4 @@
+import math
 from django.shortcuts import render, redirect
 from django.http import Http404
 from django.views import View
@@ -14,6 +15,22 @@ def build_path(request):
 
 def build_path_base64(request):
     return b64encode(build_path(request).encode('utf-8')).decode('utf-8')
+
+
+def offset_month(dt, offset):
+    """
+    Return datetime containing 1st day of month offset by `offset` months
+    from the given datetime `dt`.
+    """
+    if offset == 0:
+        return datetime(dt.year, dt.month, 1)
+    total = dt.year * 12 + dt.month + offset
+    year = math.floor(total/12)
+    month = total % 12
+    if month == 0:
+        year -= 1
+        month = 12
+    return datetime(year, month, 1)
 
 
 # Create your views here.
@@ -121,3 +138,27 @@ class add_payee(View):
 class delete_payee(View):
     def get(self, request):
         ...
+
+
+class payee_transactions(View):
+    def get(self, request):
+        context = {
+            'payee': SpendingAccount.objects.get(id=request.GET['payee']),
+        }
+        if 'from' in request.GET.keys():
+            context['current_date'] = datetime.fromisoformat(request.GET['from'])
+        else:
+            context['current_date'] = datetime.now()
+        offset_from = datetime(context['current_date'].year, context['current_date'].month, 1)
+        context['prev_month_from'] = offset_month(offset_from, -1)
+        context['prev_month_to'] = offset_month(offset_from, 0) - timedelta(1)
+        context['next_month_from'] = offset_month(offset_from, 1)
+        context['next_month_to'] = offset_month(offset_from, 2) - timedelta(1)
+        context['current_date_verbose'] = context['current_date'].strftime("%B %Y")
+        context['receipts'] = Receipt.objects.filter(
+            to_account=context['payee'],
+            date__gte=offset_from,
+            date__lt=context['next_month_from']
+        )
+        context['total'] = sum([x.amount for x in context['receipts']])
+        return render(request, 'payee_transactions.html', context)

@@ -5,7 +5,9 @@
     <tbody>
     {% for payee in payees %}
         <tr>
-            <td>{{ payee.name }}</td>
+            <td>
+                <a href="{% url 'payee_transactions' %}?payee={{ payee.id }}">{{ payee.name }}</a>
+            </td>
             <td>
                 <a href="{% url 'add_payee' %}?payee={{ payee.id }}"><i class="bi bi-pencil"></i></a>
                 <a href="{% url 'delete_payee' %}?payee={{ payee.id }}"><i class="bi bi-x-circle"></i></a>
