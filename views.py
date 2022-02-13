@@ -52,7 +52,7 @@ class add_receipt(View):
             context['id'] = r.id
         else:
             context["form"] = ReceiptForm()
-        return render(request, "add_receipt.html", context=context)
+        return render(request, "receipt_add.html", context=context)
 
     def post(self, request):
         f = ReceiptForm(request.POST)
@@ -62,10 +62,10 @@ class add_receipt(View):
             new_receipt = f.save()
             return redirect('list_view')
         else:
-            return render(request, "add_receipt.html", context={'form': f})
+            return render(request, "receipt_add.html", context={'form': f})
 
 
-class delete_receipt(View):
+class receipt_delete(View):
     # TODO: Check that the receipt is user's. Return 404 otherwise
     def get(self, request):
         try:
@@ -80,7 +80,7 @@ class delete_receipt(View):
                 receipt.delete()
                 return redirect('list_view')
 
-        return render(request, 'delete_receipt.html', {'receipt': receipt})
+        return render(request, 'receipt_delete.html', {'receipt': receipt})
 
 
 class list(View):
@@ -107,7 +107,7 @@ class payee_list(View):
         return render(request, 'payee_list.html', {'payees': payees})
 
 
-class add_payee(View):
+class payee_add(View):
     def get(self, request):
         context = {'id': 0}
         if 'next' in request.GET.keys():
@@ -119,7 +119,7 @@ class add_payee(View):
             context['id'] = p.id
         else:
             context['form'] = PayeeForm()
-        return render(request, "add_payee.html", context)
+        return render(request, "payee_add.html", context)
 
     def post(self, request):
         f = PayeeForm(request.POST)
@@ -128,14 +128,14 @@ class add_payee(View):
         f.instance.owner = Profile.objects.get(user=request.user)
         if f.is_valid():
             f.save()
-            path = 'payee'
+            path = "payee_list"
             if 'next' in request.GET.keys():
                 path = b64decode(request.GET['next']).decode('utf-8')
             return redirect(path)
-        return render(request, "add_payee.html", context={'form': f})
+        return render(request, "payee_add.html", context={'form': f})
 
 
-class delete_payee(View):
+class payee_delete(View):
     # TODO: Check that the payee is user's. Return 404 otherwise
     def get(self, request):
         try:
@@ -148,9 +148,9 @@ class delete_payee(View):
         if 'confirmed' in request.GET.keys():
             if request.GET['confirmed'] == "1":
                 payee.delete()
-                return redirect('payee')
+                return redirect("payee_list")
 
-        return render(request, 'delete_payee.html', {'payee': payee})
+        return render(request, 'payee_delete.html', {'payee': payee})
 
 
 class payee_transactions(View):

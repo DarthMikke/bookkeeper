@@ -3,7 +3,7 @@
 <div class="container">
     Er du sikker på at du vil slette kvitteringa til {{ receipt.to_account }} på {{ receipt.amount }} NOK?
     <div class="container-fluid">
-        <a class="btn btn-danger" href="{% url "delete_receipt" %}?receipt={{ receipt.id }}&confirmed=1">Ja</a>
+        <a class="btn btn-danger" href="{% url "receipt_delete" %}?receipt={{ receipt.id }}&confirmed=1">Ja</a>
         <a class="btn btn-secondary" href="{% url "list_view" %}">Nei</a>
     </div>
 </div>

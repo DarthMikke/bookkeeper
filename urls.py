@@ -2,12 +2,12 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('add_receipt.html', add_receipt.as_view(), name="add_receipt"),
-    path('edit_receipt.html', add_receipt.as_view(), name="edit_receipt"),
-    path('delete_receipt.html', delete_receipt.as_view(), name="delete_receipt"),
     path('list.html', list.as_view(), name='list_view'),
-    path('add_payee.html', add_payee.as_view(), name='add_payee'),
-    path('list_payee.html', payee_list.as_view(), name='payee'),
-    path('delete_payee.html', delete_payee.as_view(), name='delete_payee'),
-    path('payee_transactions.html', payee_transactions.as_view(), name='payee_transactions')
+    path('receipt_add.html', add_receipt.as_view(), name="receipt_add"),
+    path('receipt_edit.html', add_receipt.as_view(), name="receipt_edit"),
+    path('receipt_delete.html', receipt_delete.as_view(), name="receipt_delete"),
+    path('payee_list.html', payee_list.as_view(), name="payee_list"),
+    path('payee_transactions.html', payee_transactions.as_view(), name='payee_transactions'),
+    path('payee_add.html', payee_add.as_view(), name='payee_add'),
+    path('payee_delete.html', payee_delete.as_view(), name='payee_delete'),
 ]

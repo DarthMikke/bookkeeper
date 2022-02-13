@@ -17,19 +17,19 @@
     </ul>
     </nav>
     <div class="justify-content-center">
-        <a class="btn btn-primary" href="{% url 'add_receipt' %}?day={{ day.date.isoformat }}">Ny utgift</a>
+        <a class="btn btn-primary" href="{% url 'receipt_add' %}?day={{ day.date.isoformat }}">Ny utgift</a>
     </div>
     <table class="table">
     <tbody>
     {% for expense in receipts %}
         <tr>
-            <td><a href="{% url "payee" %}?account={{ expense.to_account.id }}">{{ expense.to_account }}</a></td>
+            <td><a href="{% url "payee_list" %}?account={{ expense.to_account.id }}">{{ expense.to_account }}</a></td>
             <td>{{ expense.category }}</td>
             <td>{{ expense.amount }} NOK</td>
-            <td><a href="{% url "edit_receipt" %}?receipt={{ expense.id }}">
+            <td><a href="{% url "receipt_edit" %}?receipt={{ expense.id }}">
                 <i class="bi bi-pencil"></i>
             </a>
-            <a href="{% url "delete_receipt" %}?receipt={{ expense.id }}"><i class="bi bi-x-circle"></i>
+            <a href="{% url "receipt_delete" %}?receipt={{ expense.id }}"><i class="bi bi-x-circle"></i>
             </a>
             </td>
         </tr>
