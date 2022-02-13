@@ -8,4 +8,5 @@ urlpatterns = [
     path('list.html', list.as_view(), name='list_view'),
     path('add_payee.html', add_payee.as_view(), name='add_payee'),
     path('list_payee.html', payee_list.as_view(), name='payee'),
+    path('delete_payee.html', delete_payee.as_view(), name='delete_payee'),
 ]

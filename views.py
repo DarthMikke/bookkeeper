@@ -86,8 +86,8 @@ class list(View):
 
 class payee_list(View):
     def get(self, request):
-
-        ...
+        payees = SpendingAccount.objects.filter(owner=Profile.objects.get(user=request.user))
+        return render(request, 'payee_list.html', {'payees': payees})
 
 
 class add_payee(View):
@@ -116,3 +116,8 @@ class add_payee(View):
                 path = b64decode(request.GET['next']).decode('utf-8')
             return redirect(path)
         return render(request, "add_payee.html", context={'form': f})
+
+
+class delete_payee(View):
+    def get(self, request):
+        ...
