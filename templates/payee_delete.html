@@ -4,8 +4,8 @@
     Er du sikker på at du vil slette {{ payee.name }}? Det vil samtidig slette
     {{ payee.number_of_receipts }} betalingar registrert på denne mottakaren.
     <div class="container-fluid">
-        <a class="btn btn-danger" href="{% url "delete_payee" %}?payee={{ payee.id }}&confirmed=1">Ja</a>
-        <a class="btn btn-secondary" href="{% url "payee" %}">Nei</a>
+        <a class="btn btn-danger" href="{% url "payee_delete" %}?payee={{ payee.id }}&confirmed=1">Ja</a>
+        <a class="btn btn-secondary" href="{% url "payee_list" %}">Nei</a>
     </div>
 </div>
 {% endblock %}

@@ -9,8 +9,8 @@
                 <a href="{% url 'payee_transactions' %}?payee={{ payee.id }}">{{ payee.name }}</a>
             </td>
             <td>
-                <a href="{% url 'add_payee' %}?payee={{ payee.id }}"><i class="bi bi-pencil"></i></a>
-                <a href="{% url 'delete_payee' %}?payee={{ payee.id }}"><i class="bi bi-x-circle"></i></a>
+                <a href="{% url 'payee_add' %}?payee={{ payee.id }}"><i class="bi bi-pencil"></i></a>
+                <a href="{% url 'payee_delete' %}?payee={{ payee.id }}"><i class="bi bi-x-circle"></i></a>
             </td>
         </tr>
     {% endfor %}
