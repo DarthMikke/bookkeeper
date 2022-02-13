@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import Http404
 from django.views import View
+from django.urls import reverse
 from .forms import ReceiptForm, PayeeForm
 from .models import Receipt, SpendingAccount, Profile
 from datetime import datetime, timedelta
@@ -99,5 +100,8 @@ class add_payee(View):
         f.instance.owner = Profile.objects.get(user=request.user)
         if f.is_valid():
             f.save()
-            return redirect('add_receipt')
+            path = reverse('add_receipt')
+            if 'receipt' in request.GET.keys():
+                path += f"?receipt={request.GET['receipt']}"
+            return redirect(path)
         return render(request, "add_payee.html", context={'form': f})

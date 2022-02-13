@@ -1,6 +1,6 @@
 {% extends "base_modal.html" %}
 {% block content %}
-    <form method="post" action="{% url 'add_payee' %}">
+    <form method="post" action="{% url 'add_payee' %}{% if 'receipt' in request.GET.keys %}?receipt={{ request.GET.receipt }}{% endif %}">
         {% csrf_token %}
         <div class="fieldWrapper">
             <label for="{{ form.name.id_for_label }}">Namn: </label>
