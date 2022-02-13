@@ -5,6 +5,15 @@ from django.urls import reverse
 from .forms import ReceiptForm, PayeeForm
 from .models import Receipt, SpendingAccount, Profile
 from datetime import datetime, timedelta
+from base64 import b64encode, b64decode
+
+
+def build_path(request):
+    return request.META['PATH_INFO'] + "?" + request.META['QUERY_STRING']
+
+
+def build_path_base64(request):
+    return b64encode(build_path(request).encode('utf-8')).decode('utf-8')
 
 
 # Create your views here.
@@ -12,7 +21,7 @@ class add_receipt(View):
     # TODO: Add authentication here
     def get(self, request):
         # TODO: Add possibility for editing with the same view
-        context = {'id': 0}
+        context = {'id': 0, 'path': build_path_base64(request)}
         if 'receipt' in request.GET.keys():
             print(f"Hentar kvittering {request.GET['receipt']}...")
             r = Receipt.objects.get(id=request.GET['receipt'])
@@ -84,6 +93,8 @@ class payee_list(View):
 class add_payee(View):
     def get(self, request):
         context = {'id': 0}
+        if 'next' in request.GET.keys():
+            context['next'] = request.GET['next']
         if 'payee' in request.GET.keys():
             p = SpendingAccount.objects.get(id=request.GET['payee'])
             f = PayeeForm({'name': p.name})
@@ -100,8 +111,8 @@ class add_payee(View):
         f.instance.owner = Profile.objects.get(user=request.user)
         if f.is_valid():
             f.save()
-            path = reverse('add_receipt')
-            if 'receipt' in request.GET.keys():
-                path += f"?receipt={request.GET['receipt']}"
+            path = 'payee'
+            if 'next' in request.GET.keys():
+                path = b64decode(request.GET['next']).decode('utf-8')
             return redirect(path)
         return render(request, "add_payee.html", context={'form': f})

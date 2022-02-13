@@ -11,10 +11,10 @@
         <div class="fieldWrapper">
             <label for="{{ form.to_account.id_for_label }}">Til: </label>
             {{ form.to_account }}
-            <a href="{% url 'add_payee' %}{% if id != 0 %}?receipt={{ id }}{% endif %}"><i class="bi bi-plus"></i></a>
+            <a href="{% url 'add_payee' %}{% if path is not None %}?next={{ path }}{% endif %}"><i class="bi bi-plus"></i></a>
             <a
               href="#"
-              onclick="document.location = `{% url 'add_payee' %}?payee=${document.getElementById('id_to_account').value}{% if id != 0 %}&receipt={{ id }}{% endif %}`; return false">
+              onclick="document.location = `{% url 'add_payee' %}?payee=${document.getElementById('id_to_account').value}{% if path is not None %}&next={{ path }}{% endif %}`; return false">
                 <i class="bi bi-pencil"></i>
             </a>
         </div>
