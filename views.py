@@ -136,8 +136,21 @@ class add_payee(View):
 
 
 class delete_payee(View):
+    # TODO: Check that the payee is user's. Return 404 otherwise
     def get(self, request):
-        ...
+        try:
+            pk = int(request.GET['payee'])
+        except:
+            return Http404("Payee doesn't exist")
+
+        payee = SpendingAccount.objects.get(id=pk)
+
+        if 'confirmed' in request.GET.keys():
+            if request.GET['confirmed'] == "1":
+                payee.delete()
+                return redirect('payee')
+
+        return render(request, 'delete_payee.html', {'payee': payee})
 
 
 class payee_transactions(View):
