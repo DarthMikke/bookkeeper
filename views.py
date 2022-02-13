@@ -121,3 +121,8 @@ class add_payee(View):
 class delete_payee(View):
     def get(self, request):
         ...
+
+
+class payee_transactions(View):
+    def get(self, request):
+        ...
