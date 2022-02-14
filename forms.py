@@ -13,6 +13,7 @@ class PayeeForm(forms.ModelForm):
         model = SpendingAccount
         fields = ['name']
 
+
 class BankAccountForm(forms.ModelForm):
     class Meta:
         model = BankAccount
