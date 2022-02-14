@@ -21,6 +21,9 @@ class BankAccount(models.Model):
     def current_balance(self):
         return self.balance - sum([x.amount for x in self.receipt_set.all()])
 
+    def number_of_receipts(self):
+        return len(self.receipt_set.all())
+
     def __str__(self):
         return self.name
 

@@ -210,3 +210,20 @@ class bank_account_add(View):
                 path = b64decode(request.GET['next']).decode('utf-8')
             return redirect(path)
         return render(request, "bank_account_add.html", context={'form': f})
+
+
+class bank_account_delete(View):
+    def get(self, request):
+        try:
+            pk = int(request.GET['account'])
+        except:
+            return Http404("Account doesn't exist")
+
+        account = BankAccount.objects.get(id=pk)
+
+        if 'confirmed' in request.GET.keys():
+            if request.GET['confirmed'] == "1":
+                account.delete()
+                return redirect("bank_account_list")
+
+        return render(request, 'bank_account_delete.html', {'account': account})
