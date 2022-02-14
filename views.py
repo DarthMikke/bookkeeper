@@ -190,7 +190,7 @@ class bank_account_add(View):
             context['next'] = request.GET['next']
         if 'account' in request.GET.keys():
             a = BankAccount.objects.get(id=request.GET['account'])
-            f = BankAccountForm({'name': a.name})
+            f = BankAccountForm({'name': a.name, 'balance': a.balance})
             context['form'] = f
             context['id'] = a.id
         else:
