@@ -33,6 +33,21 @@ def offset_month(dt, offset):
     return datetime(year, month, 1)
 
 
+def monthly_list_context(request):
+    context = {}
+    if 'from' in request.GET.keys():
+        context['current_date'] = datetime.fromisoformat(request.GET['from'])
+    else:
+        context['current_date'] = datetime.now()
+    context['offset_from'] = datetime(context['current_date'].year, context['current_date'].month, 1)
+    context['prev_month_from'] = offset_month(context['offset_from'], -1)
+    context['prev_month_to'] = offset_month(context['offset_from'], 0) - timedelta(1)
+    context['next_month_from'] = offset_month(context['offset_from'], 1)
+    context['next_month_to'] = offset_month(context['offset_from'], 2) - timedelta(1)
+    context['current_date_verbose'] = context['current_date'].strftime("%B %Y")
+    return context
+
+
 # Create your views here.
 class receipt_add(View):
     # TODO: Add authentication here
@@ -155,22 +170,11 @@ class payee_delete(View):
 
 class payee_transactions(View):
     def get(self, request):
-        context = {
-            'payee': SpendingAccount.objects.get(id=request.GET['payee']),
-        }
-        if 'from' in request.GET.keys():
-            context['current_date'] = datetime.fromisoformat(request.GET['from'])
-        else:
-            context['current_date'] = datetime.now()
-        offset_from = datetime(context['current_date'].year, context['current_date'].month, 1)
-        context['prev_month_from'] = offset_month(offset_from, -1)
-        context['prev_month_to'] = offset_month(offset_from, 0) - timedelta(1)
-        context['next_month_from'] = offset_month(offset_from, 1)
-        context['next_month_to'] = offset_month(offset_from, 2) - timedelta(1)
-        context['current_date_verbose'] = context['current_date'].strftime("%B %Y")
+        context = monthly_list_context(request)
+        context['payee'] = SpendingAccount.objects.get(id=request.GET['payee'])
         context['receipts'] = Receipt.objects.filter(
             to_account=context['payee'],
-            date__gte=offset_from,
+            date__gte=context['offset_from'],
             date__lt=context['next_month_from']
         )
         context['total'] = sum([x.amount for x in context['receipts']])
@@ -227,3 +231,16 @@ class bank_account_delete(View):
                 return redirect("bank_account_list")
 
         return render(request, 'bank_account_delete.html', {'account': account})
+
+
+class bank_account_transactions(View):
+    def get(self, request):
+        context = monthly_list_context(request)
+        context['account'] = BankAccount.objects.get(id=request.GET['account'])
+        context['receipts'] = Receipt.objects.filter(
+            from_account=context['account'],
+            date__gte=context['offset_from'],
+            date__lt=context['next_month_from']
+        )
+        context['total'] = sum([x.amount for x in context['receipts']])
+        return render(request, 'bank_account_transactions.html', context)
