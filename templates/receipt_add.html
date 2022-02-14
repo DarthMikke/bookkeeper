@@ -5,8 +5,11 @@
         <div class="fieldWrapper">
             <label for="{{ form.from_account.id_for_label }}">Frå: </label>
             {{ form.from_account }}
-            <a href="#"><i class="bi bi-plus"></i></a>
-            <a href="#"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'bank_account_add' %}{% if path is not None %}?next={{ path }}{% endif %}"><i class="bi bi-plus"></i></a>
+            <a
+              href="#"
+              onclick="document.location = `{% url 'bank_account_edit' %}?account=${document.getElementById('id_from_account').value}{% if path is not None %}&next={{ path }}{% endif %}`; return false">
+                <i class="bi bi-pencil"></i></a>
         </div>
         <div class="fieldWrapper">
             <label for="{{ form.to_account.id_for_label }}">Til: </label>
