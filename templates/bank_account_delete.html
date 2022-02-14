@@ -1,0 +1,11 @@
+{% extends "base_modal.html" %}
+{% block content %}
+<div class="container">
+    Er du sikker på at du vil slette {{ account.name }}? Det vil samtidig slette
+    {{ account.number_of_receipts }} betalingar registrert på denne mottakaren.
+    <div class="container-fluid">
+        <a class="btn btn-danger" href="{% url "bank_account_delete" %}?account={{ account.id }}&confirmed=1">Ja</a>
+        <a class="btn btn-secondary" href="{% url "bank_account_list" %}">Nei</a>
+    </div>
+</div>
+{% endblock %}

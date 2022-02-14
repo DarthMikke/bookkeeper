@@ -1,0 +1,22 @@
+{% extends "base_modal.html" %}
+{% block content %}
+    <form method="post" action="{% url 'bank_account_add' %}{% if next is not None %}?next={{ next }}{% endif %}">
+        {% csrf_token %}
+        <div class="fieldWrapper">
+            <label for="{{ form.name.id_for_label }}">Namn: </label>
+            {{ form.name }}
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.balance.id_for_label }}">Opningsbalanse: </label>
+            {{ form.balance }}
+        </div>
+        {% comment %}
+        <div class="fieldWrapper">
+            <label for="{{ form.currency.id_for_label }}">Valuta: </label>
+            {{ form.currency }}
+        </div>
+        {% endcomment %}
+        <input type="hidden" name="id" value="{{ id }}">
+        <input type="submit" value="Legg til">
+    </form>
+{% endblock %}

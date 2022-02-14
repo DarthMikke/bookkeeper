@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect
 from django.http import Http404
 from django.views import View
 from django.urls import reverse
-from .forms import ReceiptForm, PayeeForm
-from .models import Receipt, SpendingAccount, Profile
+from .forms import ReceiptForm, PayeeForm, BankAccountForm
+from .models import Receipt, SpendingAccount, Profile, BankAccount
 from datetime import datetime, timedelta
 from base64 import b64encode, b64decode
 
@@ -175,3 +175,55 @@ class payee_transactions(View):
         )
         context['total'] = sum([x.amount for x in context['receipts']])
         return render(request, 'payee_transactions.html', context)
+
+
+class bank_account_list(View):
+    def get(self, request):
+        accounts = BankAccount.objects.filter(owner=Profile.objects.get(user=request.user))
+        return render(request, 'bank_account_list.html', {'accounts': accounts})
+
+
+class bank_account_add(View):
+    def get(self, request):
+        context = {'id': 0}
+        if 'next' in request.GET.keys():
+            context['next'] = request.GET['next']
+        if 'account' in request.GET.keys():
+            a = BankAccount.objects.get(id=request.GET['account'])
+            f = BankAccountForm({'name': a.name, 'balance': a.balance})
+            context['form'] = f
+            context['id'] = a.id
+        else:
+            context['form'] = BankAccountForm()
+        return render(request, "bank_account_add.html", context)
+
+    def post(self, request):
+        f = BankAccountForm(request.POST)
+        if request.POST['id'] != "0":
+            f.instance = BankAccount.objects.get(id=int(request.POST['id']))
+        f.instance.owner = Profile.objects.get(user=request.user)
+        # f.instance.currency = "NOK"
+        if f.is_valid():
+            f.save()
+            path = "bank_account_list"
+            if 'next' in request.GET.keys():
+                path = b64decode(request.GET['next']).decode('utf-8')
+            return redirect(path)
+        return render(request, "bank_account_add.html", context={'form': f})
+
+
+class bank_account_delete(View):
+    def get(self, request):
+        try:
+            pk = int(request.GET['account'])
+        except:
+            return Http404("Account doesn't exist")
+
+        account = BankAccount.objects.get(id=pk)
+
+        if 'confirmed' in request.GET.keys():
+            if request.GET['confirmed'] == "1":
+                account.delete()
+                return redirect("bank_account_list")
+
+        return render(request, 'bank_account_delete.html', {'account': account})

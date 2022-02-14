@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h3>Kontoar</h3>
+    <div class="justify-content-center">
+        <a class="btn btn-primary" href="{% url 'bank_account_add' %}">Ny konto</a>
+    </div>
+    <table class="table">
+    <tbody>
+    {% for account in accounts %}
+        <tr>
+            <td>
+                <a href="{% url 'bank_account_transactions' %}?account={{ account.id }}">{{ account.name }}</a>
+            </td>
+            <td>{{ account.current_balance }}</td>
+            <td>
+                <a href="{% url 'bank_account_edit' %}?account={{ account.id }}"><i class="bi bi-pencil"></i></a>
+                <a href="{% url 'bank_account_delete' %}?account={{ account.id }}"><i class="bi bi-x-circle"></i></a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% endblock %}
