@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect
 from django.http import Http404
 from django.views import View
 from django.urls import reverse
-from .forms import ReceiptForm, PayeeForm
-from .models import Receipt, SpendingAccount, Profile
+from .forms import ReceiptForm, PayeeForm, BankAccountForm
+from .models import Receipt, SpendingAccount, Profile, BankAccount
 from datetime import datetime, timedelta
 from base64 import b64encode, b64decode
 
