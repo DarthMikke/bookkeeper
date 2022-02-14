@@ -195,14 +195,14 @@ class bank_account_add(View):
             context['id'] = a.id
         else:
             context['form'] = BankAccountForm()
-        return render(request, "payee_add.html", context)
+        return render(request, "bank_account_add.html", context)
 
     def post(self, request):
         f = BankAccountForm(request.POST)
         if request.POST['id'] != "0":
             f.instance = BankAccount.objects.get(id=int(request.POST['id']))
         f.instance.owner = Profile.objects.get(user=request.user)
-        f.instance.currency = "NOK"
+        # f.instance.currency = "NOK"
         if f.is_valid():
             f.save()
             path = "bank_account_list"
