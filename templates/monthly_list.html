@@ -1,23 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h3 class="text-center">{{ day.date }}</h3>
+    <h3 class="text-center">{{ account.name }}</h3>
     <nav aria-label="Change date" class="justify-content-center">
     <ul class="pagination justify-content-center">
     <li class="page-item">
-        <a class="page-link" href="{% url 'list_view' %}?day={{ prev_week.date.isoformat }}">&lt;</a>
+        <a class="page-link" href="{{ prev_path }}">&lsaquo; Førre månad</a>
     </li>
-    {% for day in days %}
     <li class="page-item">
-        <a class="page-link" href="{% url 'list_view' %}?day={{ day.date.isoformat }}">{{ day.day }}.</a>
+        <a class="page-link" href="#">{{ current_date_verbose }}</a>
     </li>
-    {% endfor %}
     <li class="page-item">
-        <a class="page-link" href="{% url 'list_view' %}?day={{ next_week.date.isoformat }}">&gt;</a>
+        <a class="page-link" href="{{ next_path }}">Neste månad &rsaquo;</a>
     </li>
     </ul>
     </nav>
     <div class="justify-content-center">
-        <a class="btn btn-primary" href="{% url 'receipt_add' %}?day={{ day.date.isoformat }}">Ny utgift</a>
+        <a class="btn btn-primary" href="{% url 'receipt_add' %}?day={{ current_date.date.isoformat }}">Ny utgift</a>
     </div>
     <table class="table">
     <tbody>

@@ -25,27 +25,12 @@ def offset_month(dt, offset):
     if offset == 0:
         return datetime(dt.year, dt.month, 1)
     total = dt.year * 12 + dt.month + offset
-    year = math.floor(total/12)
+    year = math.floor(total / 12)
     month = total % 12
     if month == 0:
         year -= 1
         month = 12
     return datetime(year, month, 1)
-
-
-def monthly_list_context(request):
-    context = {}
-    if 'from' in request.GET.keys():
-        context['current_date'] = datetime.fromisoformat(request.GET['from'])
-    else:
-        context['current_date'] = datetime.now()
-    context['offset_from'] = datetime(context['current_date'].year, context['current_date'].month, 1)
-    context['prev_month_from'] = offset_month(context['offset_from'], -1)
-    context['prev_month_to'] = offset_month(context['offset_from'], 0) - timedelta(1)
-    context['next_month_from'] = offset_month(context['offset_from'], 1)
-    context['next_month_to'] = offset_month(context['offset_from'], 2) - timedelta(1)
-    context['current_date_verbose'] = context['current_date'].strftime("%B %Y")
-    return context
 
 
 # Create your views here.
@@ -109,7 +94,7 @@ class list(View):
         context['prev_week'] = context['day'] - timedelta(7)
         context['next_week'] = context['day'] + timedelta(7)
         context['days'] = [datetime.fromisocalendar(weekdate[0], weekdate[1], i) for i in range(1, 8)]
-        context['receipts'] = Receipt.objects.filter(date__gte=context['day'], date__lt=context['day']+timedelta(1))
+        context['receipts'] = Receipt.objects.filter(date__gte=context['day'], date__lt=context['day'] + timedelta(1))
 
         context['total'] = sum([x.amount for x in context['receipts']])
 
@@ -168,19 +153,6 @@ class payee_delete(View):
         return render(request, 'payee_delete.html', {'payee': payee})
 
 
-class payee_transactions(View):
-    def get(self, request):
-        context = monthly_list_context(request)
-        context['payee'] = SpendingAccount.objects.get(id=request.GET['payee'])
-        context['receipts'] = Receipt.objects.filter(
-            to_account=context['payee'],
-            date__gte=context['offset_from'],
-            date__lt=context['next_month_from']
-        )
-        context['total'] = sum([x.amount for x in context['receipts']])
-        return render(request, 'payee_transactions.html', context)
-
-
 class bank_account_list(View):
     def get(self, request):
         accounts = BankAccount.objects.filter(owner=Profile.objects.get(user=request.user))
@@ -233,14 +205,36 @@ class bank_account_delete(View):
         return render(request, 'bank_account_delete.html', {'account': account})
 
 
-class bank_account_transactions(View):
+class MonthlyList(View):
     def get(self, request):
-        context = monthly_list_context(request)
-        context['account'] = BankAccount.objects.get(id=request.GET['account'])
-        context['receipts'] = Receipt.objects.filter(
-            from_account=context['account'],
-            date__gte=context['offset_from'],
-            date__lt=context['next_month_from']
-        )
+        context = {}
+        if 'from' in request.GET.keys():
+            context['current_date'] = datetime.fromisoformat(request.GET['from'])
+        else:
+            context['current_date'] = datetime.now()
+        context['offset_from'] = datetime(context['current_date'].year, context['current_date'].month, 1)
+        context['prev_month_from'] = offset_month(context['offset_from'], -1)
+        context['prev_month_to'] = context['offset_from']
+        context['next_month_from'] = offset_month(context['offset_from'], 1)
+        context['next_month_to'] = offset_month(context['offset_from'], 2)
+        context['current_date_verbose'] = context['current_date'].strftime("%B %Y")
+
+        additional_query = "&".join([f"{x}={y}" for (x, y) in request.GET.items() if x in ['account', 'payee']])
+        print(additional_query)
+        context['prev_path'] = request.path + "?" + additional_query \
+            + "&from=" + context['prev_month_from'].isoformat() \
+            + "&to=" + context['prev_month_to'].isoformat()
+        context['next_path'] = request.path + "?" + additional_query \
+            + "&from=" + context['next_month_from'].isoformat() \
+            + "&to=" + context['next_month_to'].isoformat()
+        filters = {
+            'date__gte': context['offset_from'],
+            'date__lt': context['next_month_from'],
+        }
+        if 'account' in request.GET.keys():
+            filters['from_account_id'] = request.GET['account']
+        if 'payee' in request.GET.keys():
+            filters['to_account_id'] = request.GET['payee']
+        context['receipts'] = Receipt.objects.filter(**filters)
         context['total'] = sum([x.amount for x in context['receipts']])
-        return render(request, 'bank_account_transactions.html', context)
+        return render(request, 'monthly_list.html', context)
