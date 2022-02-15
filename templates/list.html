@@ -17,7 +17,7 @@
     </ul>
     </nav>
     <div class="justify-content-center">
-        <a class="btn btn-primary" href="{% url 'receipt_add' %}?day={{ day.date.isoformat }}">Ny utgift</a>
+        <a class="btn btn-primary" href="{% url 'receipt_add' %}?day={{ day.isoformat }}">Ny utgift</a>
     </div>
     <table class="table">
     <tbody>
