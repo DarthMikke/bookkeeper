@@ -1,8 +1,13 @@
 from django import forms
-from .models import Receipt, SpendingAccount, BankAccount
+from .models import Receipt, SpendingAccount, BankAccount, Profile
 
 
 class ReceiptForm(forms.ModelForm):
+    def __init__(self, user_profile: Profile, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['from_account'].queryset = user_profile.bankaccount_set
+        self.fields['to_account'].queryset = user_profile.spendingaccount_set
+
     class Meta:
         model = Receipt
         fields = '__all__'

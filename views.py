@@ -43,7 +43,7 @@ class ReceiptAdd(View):
             print(f"Hentar kvittering {request.GET['receipt']}...")
             r = Receipt.objects.get(id=request.GET['receipt'])
             print(r)
-            context['form'] = ReceiptForm({
+            context['form'] = ReceiptForm(Profile.objects.get(user=request.user), {
                 'from_account': r.from_account,
                 'to_account': r.to_account,
                 'date': r.date,
@@ -51,11 +51,12 @@ class ReceiptAdd(View):
             })
             context['id'] = r.id
         else:
-            context["form"] = ReceiptForm()
+            dt = request.GET['date'] if 'date' in request.GET.keys() else datetime.now()
+            context["form"] = ReceiptForm(Profile.objects.get(user=request.user), {'date': dt})
         return render(request, "receipt_add.html", context=context)
 
     def post(self, request):
-        f = ReceiptForm(request.POST)
+        f = ReceiptForm(Profile.objects.get(user=request.user), request.POST)
         if request.POST['id'] != "0":
             f.instance = Receipt.objects.get(id=int(request.POST['id']))
         if f.is_valid():
