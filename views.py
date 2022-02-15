@@ -34,7 +34,7 @@ def offset_month(dt, offset):
 
 
 # Create your views here.
-class receipt_add(View):
+class ReceiptAdd(View):
     # TODO: Add authentication here
     def get(self, request):
         # TODO: Add possibility for editing with the same view
@@ -65,7 +65,7 @@ class receipt_add(View):
             return render(request, "receipt_add.html", context={'form': f})
 
 
-class receipt_delete(View):
+class ReceiptDelete(View):
     # TODO: Check that the receipt is user's. Return 404 otherwise
     def get(self, request):
         try:
@@ -83,7 +83,7 @@ class receipt_delete(View):
         return render(request, 'receipt_delete.html', {'receipt': receipt})
 
 
-class list(View):
+class List(View):
     def get(self, request):
         context = {}
         if 'day' in request.GET.keys():
@@ -101,13 +101,13 @@ class list(View):
         return render(request, "list.html", context=context)
 
 
-class payee_list(View):
+class PayeeList(View):
     def get(self, request):
         payees = SpendingAccount.objects.filter(owner=Profile.objects.get(user=request.user))
         return render(request, 'payee_list.html', {'payees': payees})
 
 
-class payee_add(View):
+class PayeeAdd(View):
     def get(self, request):
         context = {'id': 0}
         if 'next' in request.GET.keys():
@@ -135,7 +135,7 @@ class payee_add(View):
         return render(request, "payee_add.html", context={'form': f})
 
 
-class payee_delete(View):
+class PayeeDelete(View):
     # TODO: Check that the payee is user's. Return 404 otherwise
     def get(self, request):
         try:
@@ -153,13 +153,13 @@ class payee_delete(View):
         return render(request, 'payee_delete.html', {'payee': payee})
 
 
-class bank_account_list(View):
+class BankAccountList(View):
     def get(self, request):
         accounts = BankAccount.objects.filter(owner=Profile.objects.get(user=request.user))
         return render(request, 'bank_account_list.html', {'accounts': accounts})
 
 
-class bank_account_add(View):
+class BankAccountAdd(View):
     def get(self, request):
         context = {'id': 0}
         if 'next' in request.GET.keys():
@@ -188,7 +188,7 @@ class bank_account_add(View):
         return render(request, "bank_account_add.html", context={'form': f})
 
 
-class bank_account_delete(View):
+class BankAccountDelete(View):
     def get(self, request):
         try:
             pk = int(request.GET['account'])
