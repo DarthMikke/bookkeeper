@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
     <h3>Mottakarar</h3>
+    <div class="justify-content-center">
+        <a class="btn btn-primary" href="{% url 'payee_add' %}">Ny mottakar</a>
+    </div>
     <table class="table">
     <tbody>
     {% for payee in payees %}
