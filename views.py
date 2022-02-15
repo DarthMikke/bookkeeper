@@ -234,8 +234,10 @@ class MonthlyList(View):
         }
         if 'account' in request.GET.keys():
             filters['from_account_id'] = request.GET['account']
+            context['account'] = BankAccount.objects.get(id=request.GET['account'])
         if 'payee' in request.GET.keys():
             filters['to_account_id'] = request.GET['payee']
+            context['payee'] = SpendingAccount.objects.get(id=request.GET['payee'])
         context['receipts'] = Receipt.objects.filter(**filters)
         context['total'] = sum([x.amount for x in context['receipts']])
         return render(request, 'monthly_list.html', context)

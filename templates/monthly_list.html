@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h3 class="text-center">{{ account.name }}</h3>
+    <h3 class="text-center">Betalingar
+        {% if account %}
+            frå <strong>{{ account.name }}</strong>
+        {% endif %}
+        {% if payee %}
+            til <strong>{{ payee.name }}</strong>
+        {% endif %}
+    </h3>
     <nav aria-label="Change date" class="justify-content-center">
     <ul class="pagination justify-content-center">
     <li class="page-item">
