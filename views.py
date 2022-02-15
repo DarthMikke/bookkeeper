@@ -89,7 +89,7 @@ class List(View):
         if 'day' in request.GET.keys():
             context['day'] = datetime.fromisoformat(request.GET['day'])
         else:
-            context['day'] = datetime.now()
+            context['day'] = datetime.now().date()
         weekdate = context['day'].isocalendar()
         context['prev_week'] = context['day'] - timedelta(7)
         context['next_week'] = context['day'] + timedelta(7)
