@@ -49,14 +49,18 @@ class Transaction:
         "Mobil Billettering App": "Entur",
         "Lønn  [0-9]+ (.*)": "{0}",
         "Foodcourt Sola": "Foodcourt",
-        "Ebok.no": "Ebok.no"
+        "Ebok.no": "Ebok.no",
+        "Flybussen": "Flybussen",
+        "Extra": "Extra",
+        "Eplehuset": "Eplehuset",
+        "Scandic": "Scandic",
     }
 
     def __init__(self, date: datetime, original_payee_string: str, amount: float, match=True):
         self.date = date
         self.amount = amount
         self.original_payee_string = original_payee_string
-        self.payee = self.match(original_payee_string) if match else None
+        self.payee = self.match(original_payee_string) if match else original_payee_string
 
     def match(self, original_payee_string: str):
         matched_payee = None
@@ -66,10 +70,17 @@ class Transaction:
                 continue
 
             matched_payee = Transaction.patterns[pattern].format(*matches.groups())
+            if type(matched_payee) is str:
+                matched_payee = matched_payee.strip()
             break
+
+        if matched_payee is None:
+            matched_payee = original_payee_string
         return matched_payee
 
     def as_list(self):
+        if self.payee is None:
+            return None
         return [self.date.date().isoformat(), self.payee, self.amount]
 
 
@@ -96,6 +107,7 @@ def _match_datetime(description, year):
 
 
 def _parse_single_transaction(row, first: datetime, last: datetime):
+    last = datetime(last.year, last.month, last.day) + timedelta(1)
     if row[1].value == "Forklaring":
         return None
 
@@ -117,7 +129,7 @@ def _parse_single_transaction(row, first: datetime, last: datetime):
         transaction = Transaction(
             dt,
             row[1].value,
-            -row[3].value if row[3].value is not None else row[4].value
+            -float(row[3].value) if row[3].value is not None else float(row[4].value)
         )
     except Exception as e:
         print(e)
