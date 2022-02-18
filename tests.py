@@ -59,9 +59,18 @@ class StatementImportTestCase(TestCase):
             expected_transactions = [x.split(",") for x in fh.read().splitlines()]
             expected_transactions = [[x[0], x[1], float(x[2])] for x in expected_transactions]
 
+        self.assertEqual(len(expected_transactions), len(transactions))
+
         for i in range(len(expected_transactions)):
-            for j in range(3):
-                self.assertEqual(transactions[i][j], expected_transactions[i][j])
+            # for j in range(3):
+            #     self.assertEqual(transactions[i][j], expected_transactions[i][j])
+            expected = expected_transactions[i]
+            actual = transactions[i]
+            self.assertEqual(
+                expected,
+                actual,
+                f"Forventa {expected}, fekk {actual}"
+            )
 
     def test_datetime_matching(self):
         self.assertEqual(
