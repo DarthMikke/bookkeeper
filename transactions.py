@@ -19,7 +19,6 @@ class Transaction:
         "Håkon Daglivare Jelsagt. 5": "Joker",
         "Flytoget": "Flytoget",
         "Clas Ohlson AS": "Clas Ohlson",
-        "Varekjøp Reservert transaksjon": "Reservert beløp",
         "Vitus Apotek": "Vitus",
         "Vitusapoteket": "Vitus",
         "Fosenlinjen AS": "AtB",
@@ -54,7 +53,12 @@ class Transaction:
         "Extra": "Extra",
         "Eplehuset": "Eplehuset",
         "Scandic": "Scandic",
+        "Reservert transaksjon": "Reservert beløp",
     }
+    transaction_patterns = [
+        'Varekjøp\s(.*)\sDato',
+        'Visa\s[0-9]+\s(.*)',
+    ]
 
     def __init__(self, date: datetime, original_payee_string: str, amount: float, match=True):
         self.date = date
@@ -72,7 +76,15 @@ class Transaction:
             matched_payee = Transaction.patterns[pattern].format(*matches.groups())
             if type(matched_payee) is str:
                 matched_payee = matched_payee.strip()
-            break
+                return matched_payee
+
+        for pattern in Transaction.transaction_patterns:
+            matches = re.search(re.compile(pattern), original_payee_string)
+            if matches is None:
+                continue
+            if len(matches.groups()) > 0:
+                matched_payee = matches.groups()[0].strip()
+                break
 
         if matched_payee is None:
             matched_payee = original_payee_string
