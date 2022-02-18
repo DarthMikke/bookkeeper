@@ -4,7 +4,7 @@ from datetime import datetime
 from bookkeeper.transactions import parse_transactions, _match_datetime
 
 
-class TestMonthlyOffsets(TestCase):
+class MonthlyOffsetsTestCase(TestCase):
     def tests(self):
         self.assertEqual(
             offset_month(datetime(2021, 1, 1), -1),
@@ -62,3 +62,13 @@ class StatementImportTestCase(TestCase):
         for i in range(len(expected_transactions)):
             for j in range(3):
                 self.assertEqual(transactions[i][j], expected_transactions[i][j])
+
+    def test_datetime_matching(self):
+        self.assertEqual(
+            _match_datetime("15.12 kl. 11.00", 2022),
+            datetime(2022, 12, 15, 11, 0)
+        )
+        self.assertEqual(
+            _match_datetime("05.02 kl. 01.10", 2022),
+            datetime(2022, 2, 5, 1, 10)
+        )
