@@ -24,10 +24,19 @@
     <div class="justify-content-center">
         <a class="btn btn-primary" href="{% url 'receipt_add' %}?day={{ current_date.date.isoformat }}">Ny utgift</a>
         {% if account %}
-        <a class="btn btn-primary" href="{% url 'bank_account_edit' %}?account={{ account.id }}">Rediger {{ account.name }}</a>
+            <a
+              class="btn btn-primary"
+              href="{% url 'bank_account_edit' %}?account={{ account.id }}&day={{ current_date.date.isoformat }}">
+                Rediger {{ account.name }}
+            </a>
+            <a
+              class="btn btn-primary"
+              href="{% url 'bank_statement_import' %}?account={{ account.id }}">
+                Importer data
+            </a>
         {% endif %}
         {% if payee %}
-        <a class="btn btn-primary" href="{% url 'payee_add' %}?payee={{ payee.id }}">Rediger {{ payee.name }}</a>
+            <a class="btn btn-primary" href="{% url 'payee_add' %}?payee={{ payee.id }}">Rediger {{ payee.name }}</a>
         {% endif %}
     </div>
     <table class="table">
