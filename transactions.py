@@ -131,7 +131,7 @@ def _parse_single_transaction(row, first: datetime, last: datetime):
     if matched_dt is not None:
         dt = matched_dt
 
-    # TODO: return None if outside of desired time range
+    # Return None if outside of desired time range
     if type(dt) is not datetime:
         return None
     if dt < first or dt > last:
