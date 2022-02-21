@@ -245,6 +245,6 @@ class MonthlyList(View):
 
 class StatementImportView(View):
     def get(self, request):
-        form = StatementImportForm()
+        form = StatementImportForm(Profile.objects.get(user=request.user))
         context = {'form': form,}
         return render(request, 'bank_statement_import.html', context=context)

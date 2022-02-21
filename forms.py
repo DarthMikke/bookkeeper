@@ -26,6 +26,10 @@ class BankAccountForm(forms.ModelForm):
 
 
 class StatementImportForm(forms.ModelForm):
+    def __init__(self, user_profile: Profile, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['account'].queryset = user_profile.bankaccount_set
+
     class Meta:
         model = StatementImport
         exclude = ['created_at']
