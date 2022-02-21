@@ -245,6 +245,14 @@ class MonthlyList(View):
 
 class StatementImportView(View):
     def get(self, request):
-        form = StatementImportForm(Profile.objects.get(user=request.user))
-        context = {'form': form,}
+        data = {}
+        if 'account' in request.GET.keys():
+            data['account'] = request.GET['account']
+        if 'day' in request.GET.keys():
+            current_date = datetime.fromisoformat(request.GET['day'])
+            data['first_day'] = datetime(current_date.year, current_date.month, 1).date()
+            data['last_day'] = (offset_month(data['first_day'], 1) - timedelta(1)).date()
+        form = StatementImportForm(Profile.objects.get(user=request.user), data)
+
+        context = {'form': form}
         return render(request, 'bank_statement_import.html', context=context)
