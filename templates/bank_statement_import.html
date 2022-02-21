@@ -1,0 +1,25 @@
+{% extends "base_modal.html" %}
+{% block content %}
+    <form method="post" action="{% url 'bank_statement_import' %}{% if next is not None %}?next={{ next }}{% endif %}">
+        {% csrf_token %}
+        <div class="fieldWrapper">
+            <label for="{{ form.account.id_for_label }}">Konto: </label>
+            {{ form.account }}
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.upload.id_for_label }}">Fil for opplasting: </label>
+            {{ form.upload }}
+            {# TODO: Lenkje til filgenerator her #}
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.first_day.id_for_label }}">Importer frå: </label>
+            {{ form.first_day }}
+        </div>
+        <div class="fieldWrapper">
+            <label for="{{ form.last_day.id_for_label }}">Importer til: </label>
+            {{ form.last_day }}
+        </div>
+        <input type="hidden" name="id" value="{{ id }}">
+        <input type="submit" value="Legg til">
+    </form>
+{% endblock %}

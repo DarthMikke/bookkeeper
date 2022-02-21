@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect
 from django.http import Http404
 from django.views import View
 from django.urls import reverse
-from .forms import ReceiptForm, PayeeForm, BankAccountForm
-from .models import Receipt, SpendingAccount, Profile, BankAccount
+from .forms import ReceiptForm, PayeeForm, BankAccountForm, StatementImportForm
+from .models import Receipt, SpendingAccount, Profile, BankAccount, StatementImport
 from datetime import datetime, timedelta
 from base64 import b64encode, b64decode
 
@@ -241,3 +241,10 @@ class MonthlyList(View):
         context['receipts'] = Receipt.objects.filter(**filters)
         context['total'] = sum([x.amount for x in context['receipts']])
         return render(request, 'monthly_list.html', context)
+
+
+class StatementImportView(View):
+    def get(self, request):
+        form = StatementImportForm()
+        context = {'form': form,}
+        return render(request, 'bank_statement_import.html', context=context)

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Receipt, SpendingAccount, BankAccount, Profile
+from .models import Receipt, SpendingAccount, BankAccount, Profile, StatementImport
 
 
 class ReceiptForm(forms.ModelForm):
@@ -23,3 +23,9 @@ class BankAccountForm(forms.ModelForm):
     class Meta:
         model = BankAccount
         fields = ['name', 'balance']
+
+
+class StatementImportForm(forms.ModelForm):
+    class Meta:
+        model = StatementImport
+        exclude = ['created_at']
