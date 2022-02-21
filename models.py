@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime, timedelta, timezone
 
 # Create your models here.
 
@@ -81,3 +82,21 @@ class Transaction(models.Model):
     date = models.DateTimeField()
     amount = models.BigIntegerField()
 
+
+class StatementImport(models.Model):
+    """
+    Model for storing and accessing imported bank statements.
+    To protect privacy, bank statement files older than a threshold value
+    should be removed every day (e.g. by a cron job).
+    """
+    account = models.ForeignKey(BankAccount, on_delete=models.CASCADE)
+    upload = models.FileField(upload_to='statements/')
+    created_at = models.DateTimeField(default=datetime.now)
+    first_day = models.DateField()
+    last_day = models.DateField()
+
+    def should_delete(self) -> bool:
+        return (self.created_at + timedelta(31)) < datetime.now(tz=timezone.utc)
+
+    def __str__(self):
+        return "Import to {0}".format(self.account.name)
