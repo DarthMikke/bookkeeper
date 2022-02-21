@@ -256,3 +256,18 @@ class StatementImportView(View):
 
         context = {'form': form}
         return render(request, 'bank_statement_import.html', context=context)
+
+    def post(self, request):
+        print(request.POST, request.FILES)
+        form = StatementImportForm(
+            Profile.objects.get(user=request.user),
+            request.POST,
+            request.FILES
+        )
+        form.is_valid()
+        if form.is_valid():
+            instance = form.save()
+            return redirect(reverse('bank_statement', args=[instance.id]))
+        else:
+            return render(request, 'bank_statement_import.html', {'form': form})
+

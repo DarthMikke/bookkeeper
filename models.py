@@ -90,10 +90,11 @@ class StatementImport(models.Model):
     should be removed every day (e.g. by a cron job).
     """
     account = models.ForeignKey(BankAccount, on_delete=models.CASCADE)
-    upload = models.FileField(upload_to='statements/')
+    upload = models.FileField(upload_to=import_path)
     created_at = models.DateTimeField(default=datetime.now)
     first_day = models.DateField()
     last_day = models.DateField()
+    processed = models.BooleanField(default=False)
 
     def should_delete(self) -> bool:
         return (self.created_at + timedelta(31)) < datetime.now(tz=timezone.utc)

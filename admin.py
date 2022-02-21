@@ -3,7 +3,7 @@ from .models import *
 
 
 class StatementAdmin(admin.ModelAdmin):
-    list_display = ('account', 'created_at', 'should_delete')
+    list_display = ('account', 'created_at', 'processed', 'should_delete')
 
 
 # Register your models here.
