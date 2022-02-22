@@ -1,7 +1,12 @@
 {% extends "base_modal.html" %}
 {% block content %}
-    <form method="post" action="{% url 'bank_statement_import' %}{% if next is not None %}?next={{ next }}{% endif %}">
+    <form
+      enctype="multipart/form-data"
+      method="post"
+      action="{% url 'bank_statement_import' %}{% if next is not None %}?next={{ next }}{% endif %}"
+    >
         {% csrf_token %}
+        {{ form.errors }}
         <div class="fieldWrapper">
             <label for="{{ form.account.id_for_label }}">Konto: </label>
             {{ form.account }}
