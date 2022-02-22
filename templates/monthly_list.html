@@ -26,12 +26,12 @@
         {% if account %}
             <a
               class="btn btn-primary"
-              href="{% url 'bank_account_edit' %}?account={{ account.id }}&day={{ current_date.date.isoformat }}">
+              href="{% url 'bank_account_edit' %}?account={{ account.id }}">
                 Rediger {{ account.name }}
             </a>
             <a
               class="btn btn-primary"
-              href="{% url 'bank_statement_import' %}?account={{ account.id }}">
+              href="{% url 'bank_statement_import' %}?account={{ account.id }}&day={{ current_date.date.isoformat }}">
                 Importer data
             </a>
         {% endif %}
