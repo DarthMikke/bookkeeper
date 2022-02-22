@@ -272,6 +272,19 @@ class StatementImportView(View):
             return render(request, 'bank_statement_import.html', {'form': form})
 
 
+class StatementView(View):
+    def get(self, request, import_id):
+        instance = StatementImport.objects.filter(id=import_id)
+        if len(instance) < 1:
+            return Http404()
+        else:
+            if not instance[0].account.owner == Profile.objects.get(user=request.user):
+                return Http404()
+
+        instance = instance[0]
+        return render(request, 'bank_statement.html', {'statement': instance})
+
+
 class StatementList(View):
     def get(self, request):
         statements = StatementImport.objects.filter(account__owner__user=request.user)
