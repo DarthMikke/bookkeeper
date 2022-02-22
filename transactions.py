@@ -97,6 +97,14 @@ class Transaction:
 
 
 def parse_transactions(filepath: str, first: datetime or None, last: datetime or None):
+    """
+    Parse transactions from a bank statement.
+    @param filepath: path to a .xlsx file
+    @param first: first day to parse
+    @param last: last day to parse
+    @return: list of Transaction or None objects. None means that the row
+    was invalid or outside the desired time range.
+    """
     # TODO: Check if file exists
     wb = load_workbook(filepath)
     # TODO: Check if the workbook has any sheets
