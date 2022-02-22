@@ -19,4 +19,5 @@ urlpatterns = [
     path('bank_statement_import.html', StatementImportView.as_view(), name='bank_statement_import'),
     path('bank_statements/<import_id>.html', StatementView.as_view(), name='bank_statement'),
     path('bank_statements.html', StatementList.as_view(), name='bank_statements_list'),
+    path('delete_statement/<import_id>.html', lambda x: None, name='bank_statement_delete')
 ]

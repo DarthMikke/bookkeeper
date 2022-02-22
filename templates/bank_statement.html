@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div>Kontoutskrift importert den {{ statement.created_at }}.</div>
+    {% if not statement.processed %}
+        <div>Kontoutskrifta er ikkje behandla enno. Kom tilbake om nokon minutt
+            for å sjå transaksjonane i utskrifta.</div>
+    {% else %}
+        <table class="table">
+            <thead>
+                <td>Dato</td>
+                <td>Mottakar</td>
+                <td>Beløp</td>
+            </thead>
+            <tbody>
+                {% comment %}
+                {% for transaction in statement.imported_transactions_set %}
+                {% endfor %}
+                {% endcomment %}
+            </tbody>
+        </table>
+    {% endif %}
+    <div>
+        <a class="btn btn-primary
+        {% if not statement.processed %}
+            disabled" href="?import=1">
+        {% else %}
+            ">
+        {% endif %}
+        Godkjenn
+        </a>
+        <a
+          href="{% url 'bank_statement_delete' statement.id %}"
+          class="btn btn-danger">Slett importerte data
+        </a>
+    </div>
+{% endblock %}
