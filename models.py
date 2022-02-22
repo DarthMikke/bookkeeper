@@ -83,6 +83,15 @@ class Transaction(models.Model):
     amount = models.BigIntegerField()
 
 
+def import_path(instance, filename):
+    return 'statements/{0}/{1}/{2}_{3}'.format(
+        datetime.now().date().isoformat(),
+        instance.account.owner_id,
+        datetime.now().time().isoformat(),
+        filename
+    )
+
+
 class StatementImport(models.Model):
     """
     Model for storing and accessing imported bank statements.
