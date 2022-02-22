@@ -110,3 +110,10 @@ class StatementImport(models.Model):
 
     def __str__(self):
         return "Import to {0}".format(self.account.name)
+
+
+class ImportedTransaction(models.Model):
+    statement_import = models.ForeignKey(StatementImport, on_delete=models.CASCADE)
+    payee = models.ForeignKey(SpendingAccount, on_delete=models.SET_NULL, null=True, blank=True)
+    date = models.DateTimeField()
+    amount = models.FloatField()
