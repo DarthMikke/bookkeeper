@@ -271,3 +271,8 @@ class StatementImportView(View):
         else:
             return render(request, 'bank_statement_import.html', {'form': form})
 
+
+class StatementList(View):
+    def get(self, request):
+        statements = StatementImport.objects.filter(account__owner__user=request.user)
+        return render(request, 'bank_statement_list.html', {'statements': statements})

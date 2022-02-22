@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h3 class="text-center">Importerte kontoutskrifter</h3>
+    <table class="table">
+        <thead>
+            {# <td>Dato</td> #}
+            <td>Konto</td>
+            <td>frå</td>
+            <td>til</td>
+            <td>Behandla</td>
+            <td></td>
+        </thead>
+        <tbody>
+            {% for statement in statements %}
+                <tr>
+                    {% comment %} <td>{{ statement.created_at }}</td> {% endcomment %}
+                    <td>{{ statement.account.name }}</td>
+                    <td>{{ statement.first_day }}</td>
+                    <td>{{ statement.last_day }}</td>
+                    {% comment %} <td>{{ statement.parsed_transactions_set }}</td>{% endcomment %}
+                    <td>
+                        {% if statement.processed %}
+                            <i class="bi bi-check-circle-fill"></i>
+                        {% else %}
+                            <i class="bi bi-x-circle-fill"></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'bank_statement' statement.id %}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-search"></i>
+                            <span>Gå gjennom</span>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
