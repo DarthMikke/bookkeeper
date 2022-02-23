@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta, timezone
+from bookkeeper.transactions import parse_transactions
 
 # Create your models here.
 
@@ -80,7 +81,7 @@ class Transaction(models.Model):
         BankAccount, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions_to"
     )
     date = models.DateTimeField()
-    amount = models.BigIntegerField()
+    amount = models.FloatField()
 
 
 def import_path(instance, filename):
@@ -108,12 +109,31 @@ class StatementImport(models.Model):
     def should_delete(self) -> bool:
         return (self.created_at + timedelta(31)) < datetime.now(tz=timezone.utc)
 
+    def handle_data(self):
+        previous_transactions = ImportedTransaction.objects.filter(statement_import=self)
+        for transaction in previous_transactions:
+            transaction.delete()
+
+        transactions = parse_transactions(self.upload.path, first=self.first_day, last=self.last_day)
+        for transaction in transactions:
+            # TODO: find matching payee here
+            payee = None  # transaction.payee
+            ImportedTransaction.objects.create(
+                statement_import=self,
+                suggested_payee=payee,
+                original_payee=transaction.original_payee_string,
+                date=transaction.date,
+                amount=transaction.amount
+            )
+        return transactions
+
     def __str__(self):
         return "Import to {0}".format(self.account.name)
 
 
 class ImportedTransaction(models.Model):
     statement_import = models.ForeignKey(StatementImport, on_delete=models.CASCADE)
-    payee = models.ForeignKey(SpendingAccount, on_delete=models.SET_NULL, null=True, blank=True)
+    suggested_payee = models.ForeignKey(SpendingAccount, on_delete=models.SET_NULL, null=True, blank=True)
+    original_payee = models.CharField(max_length=1000, null=True)
     date = models.DateTimeField()
     amount = models.FloatField()

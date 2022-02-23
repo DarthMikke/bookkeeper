@@ -93,7 +93,7 @@ class StatementImportTestCase(TestCase):
         with open('bookkeeper/statements_test/expected_transactions.csv') as fh:
             self.expected_transactions = [x.split(",") for x in fh.read().splitlines()]
 
-        self.account = BankAccount.objects.create(name="Test account", owner=self.profile)
+        self.account = BankAccount.objects.create(name="Test account", owner=self.profile, balance=0)
         self.statement = StatementImport.objects.create(
             account=self.account,
             upload='bookkeeper/statements_test/transaksjonsliste.xlsx',
