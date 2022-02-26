@@ -67,7 +67,7 @@ class StatementParsingTestCase(TestCase):
             # for j in range(3):
             #     self.assertEqual(transactions[i][j], expected_transactions[i][j])
             expected = expected_transactions[i]
-            actual = transactions[i]
+            actual = transactions[i].as_list()
             self.assertEqual(
                 expected,
                 actual,
@@ -97,8 +97,8 @@ class StatementImportTestCase(TestCase):
         self.statement = StatementImport.objects.create(
             account=self.account,
             upload='bookkeeper/statements_test/transaksjonsliste.xlsx',
-            first_day=datetime(2016, 12, 1),
-            last_day=datetime(2016, 12, 31)
+            first_day=datetime(2017, 1, 1),
+            last_day=datetime(2017, 1, 31)
         )
 
         for i in range(len(self.expected_transactions)):

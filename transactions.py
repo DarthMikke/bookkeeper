@@ -154,4 +154,4 @@ def _parse_single_transaction(row, first: datetime, last: datetime):
     except Exception as e:
         print(e)
         return None
-    return transaction.as_list()
+    return transaction
