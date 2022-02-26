@@ -107,13 +107,26 @@ class StatementImportTestCase(TestCase):
             instance = SpendingAccount.objects.create(owner=self.profile, name=payee)
             self.expected_transactions[i].append(instance)
 
+        self.transactions = self.statement.handle_data()
 
-    def test_parsing(self):
-        transactions = self.statement.handle_data()
 
+    def test_number_of_entries(self):
+        self.assertEqual(len(self.transactions), len(self.expected_transactions), "Unequal amount of transactions.")
+
+    def test_dates(self):
         for i in range(len(self.expected_transactions)):
             expected = self.expected_transactions[i]
-            actual = transactions[i]
-            self.assertEqual(expected[0], actual.date, "Date")
-            self.assertEqual(expected[1], actual.payee.name, "Payee")
+            actual = self.transactions[i]
+            self.assertEqual(expected[0], actual.date.date().isoformat(), "Date")
+
+    def test_payee_parsing(self):
+        for i in range(len(self.expected_transactions)):
+            expected = self.expected_transactions[i]
+            actual = self.transactions[i]
+            self.assertEqual(expected[1], actual.suggested_payee.name, "Payee")
+
+    def test_transaction_amounts(self):
+        for i in range(len(self.expected_transactions)):
+            expected = self.expected_transactions[i]
+            actual = self.transactions[i]
             self.assertEqual(float(expected[2]), actual.amount, "Amount")
