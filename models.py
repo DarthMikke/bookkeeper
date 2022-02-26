@@ -109,23 +109,34 @@ class StatementImport(models.Model):
     def should_delete(self) -> bool:
         return (self.created_at + timedelta(31)) < datetime.now(tz=timezone.utc)
 
+    def _match_payee(self, payee_string) -> SpendingAccount:
+        payees = self.account.owner.spendingaccount_set.filter(name__icontains=payee_string)
+        if len(payees) >= 1:
+            return payees[0]
+
+        if len(payees) < 1:
+            return None
+
     def handle_data(self):
+        """Returns list of ImportedTransaction objects."""
         previous_transactions = ImportedTransaction.objects.filter(statement_import=self)
         for transaction in previous_transactions:
             transaction.delete()
 
         transactions = parse_transactions(self.upload.path, first=self.first_day, last=self.last_day)
+        imported_transactions = []
         for transaction in transactions:
             # TODO: find matching payee here
-            payee = None  # transaction.payee
-            ImportedTransaction.objects.create(
+            payee = self._match_payee(transaction.payee)
+            instance = ImportedTransaction.objects.create(
                 statement_import=self,
                 suggested_payee=payee,
                 original_payee=transaction.original_payee_string,
                 date=transaction.date,
                 amount=transaction.amount
             )
-        return transactions
+            imported_transactions.append(instance)
+        return imported_transactions
 
     def __str__(self):
         return "Import to {0}".format(self.account.name)
